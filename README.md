@@ -22,7 +22,7 @@ $ julia file.jl | mplayer -
 ## Tasks
 Some tasks to do:
 
-- DONE: to enable Julia idiomatic by means of `|>`. Function chaining. [see this](https://discourse.julialang.org/t/piping-in-julia/14735)
+- TODO: to enable Julia idiomatic by means of `|>`. Function chaining. [see this](https://discourse.julialang.org/t/piping-in-julia/14735) and [this](https://github.com/JuliaLang/julia/issues/5571).
 - TODO: to document exported functions by means of `@doc """Help""" Ffms2.source`
 - TODO: to enable array idiomatic. Something like: `clip[1,50]`.
 
