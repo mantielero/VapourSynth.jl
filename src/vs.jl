@@ -118,49 +118,53 @@ coreinfo = getCoreInfo( coreptr )
 ffms2plugin = Nothing
 
 for plugin in getplugins( coreptr )
-   println("Plugin ID: ",plugin.id)
+   #println("Plugin ID: ",plugin.id)
 
 
    #if plugin.id == "com.vapoursynth.text"
 
    #end
    if plugin.id == "com.vapoursynth.ffms2"
-      println("Mostramos las funciones:")
-      println( plugin.functions )
+      #println("Mostramos las funciones:")
+      #println( plugin.functions )
       #=
       println(names(Ffms2))
       println(Ffms2.id)
       println(Ffms2.fullname)
       println(Ffms2.__ptr__)
       =#
-      println(Ffms2.getLogLevel)
+      #println(Ffms2.getLogLevel)
       loglevel = Ffms2.getLogLevel()
+      #println( loglevel )
 
       #loglevel = plugin.functions.GetLogLevel()
-      lista = vsmap2list(loglevel)
-      println( "LogLevel: $(lista)")
+      #lista = vsmap2list(loglevel)
+      #println( "LogLevel: $(lista)")
       #newmap = plugin.functions.GetLogLevel()
       #println("RESULTADO: $(vsmap2list( newmap ))")
 
-      println("Ahora set function:")
+      #println("Ahora set function:")
 
-      println("$(methods(plugin.functions.SetLogLevel))")
-      println("======EJECUTANDO SETLOGLEVEL(1)")
+      #println("$(methods(plugin.functions.SetLogLevel))")
+      #println("======EJECUTANDO SETLOGLEVEL(1)")
       Ffms2.setLogLevel(1)
       #plugin.functions.SetLogLevel( 1 )
-      println("======DONE")
+      #println("======DONE")
       loglevel = plugin.functions.GetLogLevel()
-      lista = vsmap2list(loglevel)
-      println( "LogLevel: $(lista)")
+      #lista = vsmap2list(loglevel)
+      #println( "LogLevel: $(lista)")
 
       #println(methods(Ffms2.source))
-      newmap = Ffms2.source( "/home/jose/src/julia/vapoursynth/videos/test.mkv" )
-      nodes = vsmap2list( newmap )
-      println("NODES: ", nodes[1][2])
-      clip = Clip(nodes[1][2])
-      println(clip)
-      frame = clip[1]
-      println(frame.planes)
+      #clip = Ffms2.source( "/home/jose/src/julia/vapoursynth/videos/test.mkv" )
+      Ffms2.source( "/home/jose/src/julia/vapoursynth/videos/test.mkv" ) |> pipey4m
+
+      #println(typeof(newmap))
+      #nodes = vsmap2list( newmap )
+      #println("NODES: ", nodes[1][2])
+      #clip = Clip(nodes[1][2])
+      #println(clip)
+      #frame = clip[1]
+      #println(frame.planes)
 
 
         #=

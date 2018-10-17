@@ -277,9 +277,6 @@ end
 # DADO QUE ESTO NO ES POSIBLE, USAR LA APROXIMACIÓN DE CREAR FICHEROS DE TEXTO CON LOS MÓDULOS
 # es decir: un módulo "ffms2" que contiene las funciones. Además es más legible.
 function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
-    #https://stackoverflow.com/questions/37230071/metaprogramming-julia-functions-with-args-and-keyword-args
-    #https://github.com/JuliaMath/DecFP.jl/blob/master/src/DecFP.jl
-
     # Creating function signature
     funcname = lowercasefirst(funcname)
     Funcname = uppercasefirst(funcname)
@@ -309,26 +306,7 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
     f_call = Expr( :call,
                    funcnamesbl,
                    [ex for (t, s, ex, tipo, mandatory) in args]...)
-    #println(f_call)
 
-    # Creating the vsmap required as parameter
-    #=lista = []
-    for (t,s,ex,tipo,mandatory) in args
-        lista = [lista ; (t,s)]
-    end
-
-    #println(lista)
-
-    vsmap = createMap()
-    for (t,s,ex,tipo,mandatory) in args
-        if tipo <: Int
-            #propSetInt( vsmap, t, eval(s), paAppend )
-            ccall( vsapi.propSetInt, Cint, (Ptr{VSMap}, Cstring, Cintmax_t, Cint )
-                         , vsmap, t, s, Int(append) )
-        end
-        #setvalue(vsmap, key, value)
-    end
-    =#
     vsmap = createMap()
     lista = []
     for (t,s,ex,tipo,mandatory) in args
@@ -414,9 +392,25 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
         end
     end
 
-    lista = vcat(lista, :(Main.VapourSynth.vsinvoke($ptr, $Funcname, $vsmap )) )
-    #lista = vcat(lista, :(tmp = vsinvoke($ptr, $funcname, $vsmap )) )
-    #lista = vcat(lista, :(vsmap2list(tmp)) )
+    lista = vcat(lista, :(tmp = Main.VapourSynth.vsinvoke($ptr, $Funcname, $vsmap )) )
+    lista = vcat(lista, :(tmp = Main.VapourSynth.vsmap2list( tmp )) )
+    tmp1 = quote
+        if length( tmp ) == 1
+            tmp = tmp[1][2]
+            #println(typeof(tmp))
+            #if tmp <: Ptr{Main.VapourSynth.VSNodeRef}
+            if typeof(tmp) == Ptr{Main.VapourSynth.VSNodeRef}
+                tmp = Main.VapourSynth.Clip(tmp)
+            end
+            #return tmp
+        #else
+            #return tmp
+        end
+        return tmp
+    end
+    lista = vcat(lista, tmp1)
+
+    #end
     f_body = Expr(:block,lista...)
     f_declare = Expr( :function, f_call, f_body )
     f_declare

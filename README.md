@@ -8,10 +8,21 @@ In order to inspect what has been exported by a module it can be done by:
 println( names(Ffms2) )
 ```
 
+### Piping (function chaining)
+Functions can be chained. For instance, in order to read a file and piping it as a .y4m file:
+```julia
+Ffms2.source( "test.mkv" ) |> pipey4m
+```
+
+Then we can do:
+```
+$ julia file.jl | mplayer -
+```
+
 ## Tasks
 Some tasks to do:
 
-- TODO: to enable Julia idiomatic by means of `|>`. Function chaining. [see this](https://discourse.julialang.org/t/piping-in-julia/14735)
+- DONE: to enable Julia idiomatic by means of `|>`. Function chaining. [see this](https://discourse.julialang.org/t/piping-in-julia/14735)
 - TODO: to document exported functions by means of `@doc """Help""" Ffms2.source`
 - TODO: to enable array idiomatic. Something like: `clip[1,50]`.
 
