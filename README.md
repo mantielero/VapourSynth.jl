@@ -9,14 +9,21 @@ println( names(Ffms2) )
 ```
 
 ### Piping (function chaining)
-Functions can be chained. For instance, in order to read a file and piping it as a .y4m file:
+Functions can be chained. It is recommended using the package [Lazy.jl](https://github.com/MikeInnes/Lazy.jl). For instance, in order to read a file and piping it as a .y4m file:
 ```julia
-Ffms2.source( "test.mkv" ) |> pipey4m
+using Lazy
+@> Ffms2.source( "test.mkv" ) |> pipey4m
 ```
 
 Then we can do:
 ```
 $ julia file.jl | mplayer -
+```
+
+We can pass parameters also:
+```julia
+using Lazy
+@> Ffms2.source( "test.mkv" ) |> savey4m("deleteme.y4m")
 ```
 
 ## Tasks
