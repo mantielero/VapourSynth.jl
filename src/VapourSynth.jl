@@ -1,6 +1,8 @@
 module VapourSynth
 __precompile__(false)
 
+export savey4m, pipey4m
+
 const libpath = "/usr/lib/libvapoursynth.so"
 #const libpath = "./vs/VapourSynth.dll"
 const VAPOURSYNTH_API_MAJOR = 3

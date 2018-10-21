@@ -37,8 +37,8 @@ Some tasks to do:
 In order to test in the REPL:
 ```julia
 julia> ]
-pkg> activate .
-(VapourSynth)>
+(v1.0) pkg> activate .
+(VapourSynth) pkg>
 ```
 and press *backspace* key.
 
@@ -46,9 +46,19 @@ In order of reading and exporting the file as an *.y4m file*:
 ```julia
 julia> using VapourSynth
 julia> using Lazy
-julia> @> VapourSynth.Ffms2.source( "/home/jose/src/julia/vapoursynth/videos/test.mkv" ) VapourSynth.savey4m("/tmp/delete.y4m")
+# julia> @> VapourSynth.Ffms2.source( "/home/jose/src/julia/vapoursynth/videos/test.mkv" ) savey4m("/tmp/delete.y4m")
 ```
 
+Another example:
+```julia
+julia> using VapourSynth
+julia> using VapourSynth.Ffms2
+julia> using VapourSynth.Std
+julia> using Lazy
+julia> @> source( "/home/jose/src/julia/vapoursynth/videos/test.mkv" ) turn180 savey4m("/tmp/delete.y4m")
+```
+
+> **Not working**: I need to see why *turn180* or *flipVertical* is not working.
 
 ## Links
 Python scripting:
