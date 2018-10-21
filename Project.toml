@@ -1,0 +1,6 @@
+authors = ["Jose Maria Garcia <josemaria.alkala@gmail.com>"]
+name = "VapourSynth"
+uuid = "1027a82c-d511-11e8-3ccf-fb277cc95f88"
+version = "0.1.0"
+
+[deps]

@@ -9,6 +9,7 @@ const libpath = "/usr/lib/libvapoursynth.so"
 const VAPOURSYNTH_API_MAJOR = 3
 const VAPOURSYNTH_API_MINOR = 5
 
+#function __init__()
 include("./vsapi.jl")
 include("./vsframe.jl")
 include("./vsclip.jl")
@@ -19,6 +20,8 @@ include("./output.jl")
 
 const vsapi = get_api(3)
 const coreptr = createCore( 0 ) # Puntero al core, que no es multihilo por defecto
+#end
+
 
 # Skipping MacroDefinition: VAPOURSYNTH_API_VERSION ( ( VAPOURSYNTH_API_MAJOR << 16 ) | ( VAPOURSYNTH_API_MINOR ) )
 # Skipping MacroDefinition: VS_EXTERNAL_API ( ret ) VS_EXTERN_C __attribute__ ( ( visibility ( "default" ) ) ) ret VS_CC
@@ -117,7 +120,7 @@ coreinfo = getCoreInfo( coreptr )
 #arguments = propSetData( core_p::Ptr{VSCore}, key::AbstractString, size::Int64, append::VSPropAppendMode )
 #arguments = propSetData( vsmap, key, data, size, paAppend )
 ffms2plugin = Nothing
-
+#=
 for plugin in getplugins( coreptr )
    #println("Plugin ID: ",plugin.id)
 
@@ -231,5 +234,6 @@ for plugin in getplugins( coreptr )
 end
 
 freeCore(  coreptr )
-
+=#
+#using .Ffms2
 end

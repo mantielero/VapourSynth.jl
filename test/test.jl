@@ -1,3 +1,4 @@
+using VapourSynth
 using Lazy
 
 @> Ffms2.source( "/home/jose/src/julia/vapoursynth/videos/test.mkv" ) pipey4m
