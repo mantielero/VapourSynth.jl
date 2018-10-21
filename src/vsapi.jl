@@ -1,5 +1,5 @@
 struct VSAPI
-    createCore::Ptr{Cvoid}      #VSCore *(*createCore)(int threads)
+    createCore::Ptr{Cvoid}
     freeCore::Ptr{Cvoid}
     getCoreInfo::Ptr{Cvoid}
     cloneFrameRef::Ptr{Cvoid}
@@ -108,46 +108,8 @@ Creates the VapourSynth processing core and returns a pointer to it. It is legal
 threads
     Number of desired worker threads. If 0 or lower, a suitable value is automatically chosen, based on the number of logical CPUs.
 
-
 http://www.vapoursynth.com/doc/api/vapoursynth.h.html#createcore
-https://github.com/tgoyne/luasynth/blob/master/luasynth/vscore.lua
-
-VSCore *(VS_CC *createCore)(int threads) VS_NOEXCEPT;
-
-TODO: en pyx tienen instance.add_cache = True
-
-cdef Core createCore():
-    cdef Core instance = Core.__new__(Core)
-    instance.funcs = getVapourSynthAPI(VAPOURSYNTH_API_VERSION)
-    if instance.funcs == NULL:
-        raise Error('Failed to obtain VapourSynth API pointer. System does not support SSE2 or is the Python module and loaded core library mismatched?')
-    instance.core = instance.funcs.createCore(0)
-    instance.add_cache = True
-    return instance
-
-def get_core(threads = None, add_cache = None):
-    global _using_vsscript
-    ret_core = None
-    if _using_vsscript:
-        global _cores
-        eid = _env_current_id()
-        if eid is None:
-            raise Error('Internal environment id not set. Was get_core() called from a filter callback?')
-        ret_core = vsscript_get_core_internal(eid)
-    else:
-        global _core
-        if _core is None:
-            _core = createCore()
-        ret_core = _core
-    if ret_core is not None:
-        if threads is not None:
-            ret_core.num_threads = threads
-        if add_cache is not None:
-            ret_core.add_cache = add_cache
-    return ret_core
-
 """
-#function createCore(api::VSAPI, threads::Int)
 function createCore( threads::Int )
     ptr = ccall( vsapi.createCore, Ptr{VSCore}, (Cint,)
                , Cint(threads))

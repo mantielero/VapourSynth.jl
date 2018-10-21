@@ -1,15 +1,13 @@
-#using Compat
-#Base.disable_logging(0)
 module VapourSynth
-
+__precompile__(false)
 
 const libpath = "/usr/lib/libvapoursynth.so"
 #const libpath = "./vs/VapourSynth.dll"
-
 const VAPOURSYNTH_API_MAJOR = 3
 const VAPOURSYNTH_API_MINOR = 5
 
-#function __init__()
+
+
 include("./vsapi.jl")
 include("./vsframe.jl")
 include("./vsclip.jl")
@@ -18,8 +16,10 @@ include("./vsplugins.jl")
 include("./vsmodules.jl")
 include("./output.jl")
 
+#function __init__()
 const vsapi = get_api(3)
 const coreptr = createCore( 0 ) # Puntero al core, que no es multihilo por defecto
+#   return (vsapi,coreptr)
 #end
 
 
@@ -92,34 +92,16 @@ end
 abstract type VSFrameContext
 end
 
-
-"""
-https://github.com/tgoyne/luasynth/blob/7f14fa047d3b02fa174aed73391d6ca511fb70a9/luasynth/vsnoderef.lua#L106
-
-for plane = 1, format.numPlanes do
-  local pitch = frame:stride(plane)
-  local readPtr = frame:readPtr(plane)
-local rowSize = frame:width(plane) * format.bytesPerSample
-
-
-for y = 1, frame:height(plane) do
-  ffi.C.fwrite(readPtr, 1, rowSize, file)
-readPtr = readPtr + pitch
-"""
-
-
-#api = get_api(3)
-
-#core = unsafe_load(core_p)
 coreinfo = getCoreInfo( coreptr )
-
-#print(coreinfo)
 
 #---------- Llamamos a un filtro
 # Para construir el VSMap de los argumentos, tenemos que poder construir un VSMap
 #arguments = propSetData( core_p::Ptr{VSCore}, key::AbstractString, size::Int64, append::VSPropAppendMode )
 #arguments = propSetData( vsmap, key, data, size, paAppend )
-ffms2plugin = Nothing
+#ffms2plugin = Nothing
+genmodules( coreptr )
+#using .Ffms2
+println("OK")
 #=
 for plugin in getplugins( coreptr )
    #println("Plugin ID: ",plugin.id)
@@ -235,5 +217,5 @@ end
 
 freeCore(  coreptr )
 =#
-#using .Ffms2
+#
 end

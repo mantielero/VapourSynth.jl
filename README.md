@@ -33,6 +33,23 @@ Some tasks to do:
 - TODO: to document exported functions by means of `@doc """Help""" Ffms2.source`
 - TODO: to enable array idiomatic. Something like: `clip[1,50]`.
 
+## REPL
+In order to test in the REPL:
+```julia
+julia> ]
+pkg> activate .
+(VapourSynth)>
+```
+and press *backspace* key.
+
+In order of reading and exporting the file as an *.y4m file*:
+```julia
+julia> using VapourSynth
+julia> using Lazy
+julia> @> VapourSynth.Ffms2.source( "/home/jose/src/julia/vapoursynth/videos/test.mkv" ) VapourSynth.savey4m("/tmp/delete.y4m")
+```
+
+
 ## Links
 Python scripting:
 

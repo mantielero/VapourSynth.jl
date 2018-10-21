@@ -185,6 +185,19 @@ getplugins(  core::Ptr{VSCore} ) = Channel() do c
 end
 
 """
+Creates modules based on loaded plugins
+"""
+function genmodules(  core::Ptr{VSCore} )
+    vsmap = getPlugins( core )
+    for item in vsmap2list( vsmap )
+        #plugin = Plugin( core, item[2])
+        println(item[2])
+        gen_module( core, item[2])
+        #push!(c, plugin)
+    end
+end
+
+"""
 Generador de las funciones de un plugin
 (PRIVADA)
 """
