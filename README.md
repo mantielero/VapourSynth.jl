@@ -60,6 +60,31 @@ julia> @> source( "/home/jose/src/julia/vapoursynth/videos/test.mkv" ) turn180 s
 
 > **Not working**: I need to see why *turn180* or *flipVertical* is not working.
 
+Se queja de:
+
+    Attempted to read key '_Error' from a map with error set: Turn180: argument clip is required
+
+el código de la función autogenerada es:
+
+```julia
+function turn180(clip::Main.VapourSynth.Clip)
+    (Main.VapourSynth).propSetNode(Ptr{Main.VapourSynth.VSMap} @0x0000557df6ca1aa0, "clip", clip.ptr, (Main.VapourSynth).paAppend)
+    tmp = (Main.VapourSynth).vsinvoke(Ptr{Main.VapourSynth.VSPlugin} @0x0000557df66dd920, "Turn180", Ptr{Main.VapourSynth.VSMap} @0x0000557df6ca1aa0)
+    tmp = (Main.VapourSynth).vsmap2list(tmp)
+    begin
+        if length(tmp) == 1
+            tmp = (tmp[1])[2]
+
+            if typeof(tmp) == Ptr{(Main.VapourSynth).VSNodeRef}
+                tmp = (Main.VapourSynth).Clip(tmp)
+            end
+        end
+        return tmp
+    end
+end
+```
+
+
 ## Links
 Python scripting:
 

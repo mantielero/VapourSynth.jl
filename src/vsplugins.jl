@@ -322,6 +322,7 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
 
     vsmap = createMap()
     lista = []
+    #println(f_call)
     for (t,s,ex,tipo,mandatory) in args
         #if !mandatory
         #    lista = vcat(lista, :(if $s != nothing) )
@@ -343,6 +344,10 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
                 lista = vcat(lista, :(Main.VapourSynth.propSetFrame( $vsmap, $t, $s, Main.VapourSynth.paAppend ) ))
             elseif tipo <: VSFuncRef
                 lista = vcat(lista, :(Main.VapourSynth.propSetFunc( $vsmap, $t, $s, Main.VapourSynth.paAppend ) ))
+            elseif tipo <: Clip
+                #println($s.ptr)
+                lista = vcat(lista, :(println("Puntero: ", $s.ptr) ) )
+                lista = vcat(lista, :(Main.VapourSynth.propSetNode( $vsmap, $t, $s.ptr, Main.VapourSynth.paAppend ) ))
             end
         else
             if tipo <: Int
@@ -405,7 +410,12 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
         end
     end
 
+    #(t,s,ex,tipo,mandatory) = args[1]
+
+    #println( tipo )
+
     lista = vcat(lista, :(tmp = Main.VapourSynth.vsinvoke($ptr, $Funcname, $vsmap )) )
+    lista = vcat(lista, :(println("----- ok ----") ) )    
     lista = vcat(lista, :(tmp = Main.VapourSynth.vsmap2list( tmp )) )
     tmp1 = quote
         if length( tmp ) == 1
@@ -426,6 +436,9 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
     #end
     f_body = Expr(:block,lista...)
     f_declare = Expr( :function, f_call, f_body )
+    #if funcname == "turn180"
+    #    println(f_declare)
+    #end
     f_declare
 end
 
