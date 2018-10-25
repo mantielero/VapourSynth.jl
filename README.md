@@ -31,6 +31,11 @@ julia> VapourSynth.Ffms2.fullname
 "FFmpegSource 2 for VapourSynth"
 ```
 
+We can inspect also the methods of a function:
+```julia
+julia> methods( VapourSynth.Ffms2.source )
+```
+
 ### Piping (function chaining)
 Functions can be chained. It is recommended to use the package [Lazy.jl](https://github.com/MikeInnes/Lazy.jl). For instance, in order to read a file and pipe it as a .y4m file:
 ```julia
