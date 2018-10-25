@@ -103,7 +103,7 @@ coreinfo = getCoreInfo( coreptr )
 #ffms2plugin = Nothing
 genmodules( coreptr )
 #using .Ffms2
-println("OK")
+#println("OK")
 #=
 for plugin in getplugins( coreptr )
    #println("Plugin ID: ",plugin.id)

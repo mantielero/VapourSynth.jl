@@ -525,9 +525,9 @@ end
 
         Returns 0 on success, or 1 if trying to append to a property with the wrong type.
 """
-function propSetNode( vsmap::Ptr{VSMap}, key::AbstractString, node::Union{Ptr{VSNodeRef},Symbol}, append::VSPropAppendMode )
+function propSetNode( vsmap::Ptr{VSMap}, key::AbstractString, node::Ptr{VSNodeRef}, append::VSPropAppendMode ) #Union{Ptr{VSNodeRef},Symbol}
     # int propSetNode(VSMap *map, const char *key, VSNodeRef *node, int append)
-    err = ccall( vsapi.propSetNode, Cint, (Ptr{VSMap}, String, Ptr{VSNodeRef}, Cint )
+    err = ccall( vsapi.propSetNode, Cint, (Ptr{VSMap}, Cstring, Ptr{VSNodeRef}, Cint )
                  , vsmap, key, node, Int64(append) )
     Int64(err)
 end

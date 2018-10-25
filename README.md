@@ -46,7 +46,7 @@ In order of reading and exporting the file as an *.y4m file*:
 ```julia
 julia> using VapourSynth
 julia> using Lazy
-# julia> @> VapourSynth.Ffms2.source( "/home/jose/src/julia/vapoursynth/videos/test.mkv" ) savey4m("/tmp/delete.y4m")
+julia> @> VapourSynth.Ffms2.source( "/home/jose/src/julia/vapoursynth/videos/test.mkv" ) savey4m("/tmp/delete.y4m")
 ```
 
 Another example:
@@ -55,51 +55,8 @@ julia> using VapourSynth
 julia> using VapourSynth.Ffms2
 julia> using VapourSynth.Std
 julia> using Lazy
-julia> @> source( "/home/jose/src/julia/vapoursynth/videos/test.mkv" ) turn180 savey4m("/tmp/delete.y4m")
+julia> @> source( "test.mkv" ) turn180 savey4m("/tmp/newvideo.y4m")
 ```
-
-> **Not working**: I need to see why *turn180* or *flipVertical* is not working.
-
-Se queja de:
-
-    Attempted to read key '_Error' from a map with error set: Turn180: argument clip is required
-
-    Turn180: argument clip is required
-
-el código de la función autogenerada es:
-
-```julia
-function turn180(clip::VapourSynth.Clip)
-    println("Puntero: ", clip.ptr)
-    (Main.VapourSynth).propSetNode(Ptr{VapourSynth.VSMap} @0x00005590dd089f20, "clip", clip.ptr, (Main.VapourSynth).paAppend)
-    tmp = (Main.VapourSynth).vsinvoke(Ptr{VapourSynth.VSPlugin} @0x00005590dcab38d0, "Turn180", Ptr{VapourSynth.VSMap} @0x00005590dd089f20)
-    println("----- ok ----")
-    error = (Main.VapourSynth).getError(tmp)
-    begin
-        #= /home/jose/src/VapourSynth/src/vsplugins.jl:422 =#
-        if error != nothing
-            #= /home/jose/src/VapourSynth/src/vsplugins.jl:423 =#
-            println("|ERROR|", error)
-        end
-    end
-    tmp = (Main.VapourSynth).vsmap2list(tmp)
-    begin
-        #= /home/jose/src/VapourSynth/src/vsplugins.jl:431 =#
-        if length(tmp) == 1
-            #= /home/jose/src/VapourSynth/src/vsplugins.jl:432 =#
-            tmp = (tmp[1])[2]
-            #= /home/jose/src/VapourSynth/src/vsplugins.jl:435 =#
-            if typeof(tmp) == Ptr{(Main.VapourSynth).VSNodeRef}
-                #= /home/jose/src/VapourSynth/src/vsplugins.jl:436 =#
-                tmp = (Main.VapourSynth).Clip(tmp)
-            end
-        end
-        #= /home/jose/src/VapourSynth/src/vsplugins.jl:442 =#
-        return tmp
-    end
-end
-```
-
 
 ## Links
 Python scripting:

@@ -190,10 +190,8 @@ Creates modules based on loaded plugins
 function genmodules(  core::Ptr{VSCore} )
     vsmap = getPlugins( core )
     for item in vsmap2list( vsmap )
-        #plugin = Plugin( core, item[2])
-        println(item[2])
+        #println(item[2])
         gen_module( core, item[2])
-        #push!(c, plugin)
     end
 end
 
@@ -298,7 +296,9 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
     # Incluye: parámetros obligatorios + opcionales (les asigna nothing)
     f_arguments = []
     f_argumentsopt = Expr(:parameters)
-
+    #if funcname == "turn180"
+    #    println(params)
+    #end
     #args_mandatory = []
     args = []
 
@@ -320,8 +320,10 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
                    funcnamesbl,
                    [ex for (t, s, ex, tipo, mandatory) in args]...)
 
-    vsmap = createMap()
+
     lista = []
+
+    lista = vcat(lista, :(vsmap = Main.VapourSynth.createMap()))
     #println(f_call)
     for (t,s,ex,tipo,mandatory) in args
         #if !mandatory
@@ -329,80 +331,78 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
         #end
         if mandatory
             if tipo <: Int
-                lista = vcat(lista, :(Main.VapourSynth.propSetInt( $vsmap, $t, $s, Main.VapourSynth.paAppend )))
+                lista = vcat(lista, :(Main.VapourSynth.propSetInt( vsmap, $t, $s, Main.VapourSynth.paAppend )))
             elseif tipo <: Array{Int64,1}
-                lista = vcat(lista, :(Main.VapourSynth.propSetIntArray( $vsmap, $t, $s ) ))
+                lista = vcat(lista, :(Main.VapourSynth.propSetIntArray( vsmap, $t, $s ) ))
             elseif tipo <: AbstractFloat
-                lista = vcat(lista, :(Main.VapourSynth.propSetFloat( $vsmap, $t, $s, Main.VapourSynth.paAppend ) ))
+                lista = vcat(lista, :(Main.VapourSynth.propSetFloat( vsmap, $t, $s, Main.VapourSynth.paAppend ) ))
             elseif tipo <: Array{Float64,1}
-                lista = vcat(lista, :(Main.VapourSynth.propSetFloatArray( $vsmap, $t, $s ) ))
+                lista = vcat(lista, :(Main.VapourSynth.propSetFloatArray( vsmap, $t, $s ) ))
             elseif tipo <: AbstractString
-                lista = vcat(lista, :(Main.VapourSynth.propSetData( $vsmap, $t, $s, Main.VapourSynth.paAppend ) ))
+                lista = vcat(lista, :(Main.VapourSynth.propSetData( vsmap, $t, $s, Main.VapourSynth.paAppend ) ))
             elseif tipo <: VSNodeRef
-                lista = vcat(lista, :(Main.VapourSynth.propSetNode( $vsmap, $t, $s, Main.VapourSynth.paAppend ) ))
+                lista = vcat(lista, :(Main.VapourSynth.propSetNode( vsmap, $t, $s, Main.VapourSynth.paAppend ) ))
             elseif tipo <: VSFrameRef
-                lista = vcat(lista, :(Main.VapourSynth.propSetFrame( $vsmap, $t, $s, Main.VapourSynth.paAppend ) ))
+                lista = vcat(lista, :(Main.VapourSynth.propSetFrame( vsmap, $t, $s, Main.VapourSynth.paAppend ) ))
             elseif tipo <: VSFuncRef
-                lista = vcat(lista, :(Main.VapourSynth.propSetFunc( $vsmap, $t, $s, Main.VapourSynth.paAppend ) ))
+                lista = vcat(lista, :(Main.VapourSynth.propSetFunc( vsmap, $t, $s, Main.VapourSynth.paAppend ) ))
             elseif tipo <: Clip
-                #println($s.ptr)
-                lista = vcat(lista, :(println("Puntero: ", $s.ptr) ) )
-                lista = vcat(lista, :(Main.VapourSynth.propSetNode( $vsmap, $t, $s.ptr, Main.VapourSynth.paAppend ) ))
+                lista = vcat(lista, :(tmp = Main.VapourSynth.propSetNode( vsmap, $t, $s.ptr, Main.VapourSynth.paAppend ) ))
             end
         else
             if tipo <: Int
                 tmp = quote
                     if $s != nothing
-                       Main.VapourSynth.propSetInt( $vsmap, $t, $s, Main.VapourSynth.paAppend )
+                       Main.VapourSynth.propSetInt( vsmap, $t, $s, Main.VapourSynth.paAppend )
                     end
                 end
                 lista = vcat(lista, tmp )
             elseif tipo <: Array{Int64,1}
                 tmp = quote
                     if $s != nothing
-                       Main.VapourSynth.propSetIntArray( $vsmap, $t, $s )
+                       Main.VapourSynth.propSetIntArray( vsmap, $t, $s )
                     end
                 end
                 lista = vcat(lista, tmp )
             elseif tipo <: AbstractFloat
                 tmp = quote
                     if $s != nothing
-                       Main.VapourSynth.propSetFloat( $vsmap, $t, $s, Main.VapourSynth.paAppend )
+                       Main.VapourSynth.propSetFloat( vsmap, $t, $s, Main.VapourSynth.paAppend )
                     end
                 end
                 lista = vcat(lista, tmp )
             elseif tipo <: Array{Float64,1}
                 tmp = quote
                     if $s != nothing
-                       Main.VapourSynth.propSetFloatArray( $vsmap, $t, $s )
+                       Main.VapourSynth.propSetFloatArray( vsmap, $t, $s )
                     end
                 end
                 lista = vcat(lista, tmp)
             elseif tipo <: AbstractString
                 tmp = quote
                     if $s != nothing
-                       Main.VapourSynth.propSetData( $vsmap, $t, $s, Main.VapourSynth.paAppend )
+                       Main.VapourSynth.propSetData( vsmap, $t, $s, Main.VapourSynth.paAppend )
                     end
                 end
                 lista = vcat(lista, tmp)
             elseif tipo <: VSNodeRef
                 tmp = quote
                     if $s != nothing
-                       Main.VapourSynth.propSetNode( $vsmap, $t, $s, Main.VapourSynth.paAppend )
+                       Main.VapourSynth.propSetNode( vsmap, $t, $s, Main.VapourSynth.paAppend )
                     end
                 end
                 lista = vcat(lista, tmp)
             elseif tipo <: VSFrameRef
                 tmp = quote
                     if $s != nothing
-                       Main.VapourSynth.propSetFrame( $vsmap, $t, $s, Main.VapourSynth.paAppend )
+                       Main.VapourSynth.propSetFrame( vsmap, $t, $s, Main.VapourSynth.paAppend )
                     end
                 end
                 lista = vcat(lista, tmp )
             elseif tipo <: VSFuncRef
                 tmp = quote
                     if $s != nothing
-                       Main.VapourSynth.propSetFunc( $vsmap, $t, $s, Main.VapourSynth.paAppend )
+                       Main.VapourSynth.propSetFunc( vsmap, $t, $s, Main.VapourSynth.paAppend )
                     end
                 end
                 lista = vcat(lista, tmp)
@@ -414,16 +414,16 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
 
     #println( tipo )
 
-    lista = vcat(lista, :(tmp = Main.VapourSynth.vsinvoke($ptr, $Funcname, $vsmap )) )
-    lista = vcat(lista, :(println("----- ok ----") ) )
+    lista = vcat(lista, :(tmp = Main.VapourSynth.vsinvoke($ptr, $Funcname, vsmap )) )
+    #lista = vcat(lista, :(println("----- ok ----") ) )
     lista = vcat(lista, :(error = Main.VapourSynth.getError( tmp )))
 
-    error_mng = quote
-        if error != nothing
-            println("|ERROR|", error)
-        end
-    end
-    lista = vcat(lista, error_mng) #:(println("|ERROR|", error)) )
+    #error_mng = quote
+    #    if error != nothing
+    #        println("|ERROR|", error)
+    #    end
+    #end
+    #lista = vcat(lista, error_mng) #:(println("|ERROR|", error)) )
     #lista = vcat(lista, :(tmp = Main.VapourSynth.vsmap2list( tmp )) )
 
     lista = vcat(lista, :(tmp = Main.VapourSynth.vsmap2list( tmp )) )
@@ -446,9 +446,6 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
     #end
     f_body = Expr(:block,lista...)
     f_declare = Expr( :function, f_call, f_body )
-    if funcname == "turn180"
-        println(f_declare)
-    end
     f_declare
 end
 
