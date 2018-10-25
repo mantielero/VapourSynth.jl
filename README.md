@@ -64,21 +64,37 @@ Se queja de:
 
     Attempted to read key '_Error' from a map with error set: Turn180: argument clip is required
 
+    Turn180: argument clip is required
+
 el código de la función autogenerada es:
 
 ```julia
-function turn180(clip::Main.VapourSynth.Clip)
-    (Main.VapourSynth).propSetNode(Ptr{Main.VapourSynth.VSMap} @0x0000557df6ca1aa0, "clip", clip.ptr, (Main.VapourSynth).paAppend)
-    tmp = (Main.VapourSynth).vsinvoke(Ptr{Main.VapourSynth.VSPlugin} @0x0000557df66dd920, "Turn180", Ptr{Main.VapourSynth.VSMap} @0x0000557df6ca1aa0)
+function turn180(clip::VapourSynth.Clip)
+    println("Puntero: ", clip.ptr)
+    (Main.VapourSynth).propSetNode(Ptr{VapourSynth.VSMap} @0x00005590dd089f20, "clip", clip.ptr, (Main.VapourSynth).paAppend)
+    tmp = (Main.VapourSynth).vsinvoke(Ptr{VapourSynth.VSPlugin} @0x00005590dcab38d0, "Turn180", Ptr{VapourSynth.VSMap} @0x00005590dd089f20)
+    println("----- ok ----")
+    error = (Main.VapourSynth).getError(tmp)
+    begin
+        #= /home/jose/src/VapourSynth/src/vsplugins.jl:422 =#
+        if error != nothing
+            #= /home/jose/src/VapourSynth/src/vsplugins.jl:423 =#
+            println("|ERROR|", error)
+        end
+    end
     tmp = (Main.VapourSynth).vsmap2list(tmp)
     begin
+        #= /home/jose/src/VapourSynth/src/vsplugins.jl:431 =#
         if length(tmp) == 1
+            #= /home/jose/src/VapourSynth/src/vsplugins.jl:432 =#
             tmp = (tmp[1])[2]
-
+            #= /home/jose/src/VapourSynth/src/vsplugins.jl:435 =#
             if typeof(tmp) == Ptr{(Main.VapourSynth).VSNodeRef}
+                #= /home/jose/src/VapourSynth/src/vsplugins.jl:436 =#
                 tmp = (Main.VapourSynth).Clip(tmp)
             end
         end
+        #= /home/jose/src/VapourSynth/src/vsplugins.jl:442 =#
         return tmp
     end
 end

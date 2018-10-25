@@ -71,9 +71,13 @@ Returns a pointer to the error message contained in the map, or NULL if there is
 """
 function getError( vsmap::Ptr{VSMap} )
     #void setError(VSMap *map, const char *errorMessage)
-    ptr = ccall( vsapi.getError, Ptr{String}, (Ptr{VSMap}, )
+    ptr = ccall( vsapi.getError, Cstring, (Ptr{VSMap}, )
                , vsmap)
-    unsafe_string(ptr)
+    if ptr == C_NULL
+        return nothing
+    else
+        return unsafe_string(ptr)
+    end
 end
 
 """

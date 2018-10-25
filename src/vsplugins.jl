@@ -415,7 +415,17 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
     #println( tipo )
 
     lista = vcat(lista, :(tmp = Main.VapourSynth.vsinvoke($ptr, $Funcname, $vsmap )) )
-    lista = vcat(lista, :(println("----- ok ----") ) )    
+    lista = vcat(lista, :(println("----- ok ----") ) )
+    lista = vcat(lista, :(error = Main.VapourSynth.getError( tmp )))
+
+    error_mng = quote
+        if error != nothing
+            println("|ERROR|", error)
+        end
+    end
+    lista = vcat(lista, error_mng) #:(println("|ERROR|", error)) )
+    #lista = vcat(lista, :(tmp = Main.VapourSynth.vsmap2list( tmp )) )
+
     lista = vcat(lista, :(tmp = Main.VapourSynth.vsmap2list( tmp )) )
     tmp1 = quote
         if length( tmp ) == 1
@@ -436,9 +446,9 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
     #end
     f_body = Expr(:block,lista...)
     f_declare = Expr( :function, f_call, f_body )
-    #if funcname == "turn180"
-    #    println(f_declare)
-    #end
+    if funcname == "turn180"
+        println(f_declare)
+    end
     f_declare
 end
 
