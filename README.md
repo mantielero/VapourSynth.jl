@@ -1,37 +1,55 @@
 # VapourSynth.jl
 
-## Modules vs Plugins
-For each plugin, a Julia module is created automatically. The module name gets first letter capitalized. So plugin *ffms2* becomes module *Ffms2*. Function names get first letter lowercase. I think this brings VapourSynth a bit closer to Julia idiomatic.
+## Why
+First, this is just an experiment. Julia could be a good fit in the sense that it is good for scripting, but maybe it could be used for where normally C/C++ is used in VapourSynth. So there are two objectives:
+- [X] To wrap the library to enable scripting
+- [ ] To create a filter in Julia and to see how it performs.
+
+## Scripting
+### Modules vs Plugins
+For each loaded plugin, a Julia module is created automatically.
+
+To make it look more like Julia:
+- the module name gets its first letter capitalized (so plugin *ffms2* becomes module *Ffms2*).
+- function names get their first letter lowercased (so function *Turn180* becomes *turn180*).
 
 In order to inspect what has been exported by a module it can be done by:
 ```julia
-println( names(Ffms2) )
+julia> using VapourSynth
+julia> names(VapourSynth.Ffms2)
+9-element Array{Symbol,1}:
+ :Ffms2      
+ :__ptr__    
+ :fullname   
+ :getLogLevel
+ :id         
+ :index      
+ :setLogLevel
+ :source     
+ :version  
+julia> VapourSynth.Ffms2.fullname
+"FFmpegSource 2 for VapourSynth"
 ```
 
 ### Piping (function chaining)
-Functions can be chained. It is recommended using the package [Lazy.jl](https://github.com/MikeInnes/Lazy.jl). For instance, in order to read a file and piping it as a .y4m file:
+Functions can be chained. It is recommended to use the package [Lazy.jl](https://github.com/MikeInnes/Lazy.jl). For instance, in order to read a file and pipe it as a .y4m file:
 ```julia
+using VapourSynth
 using Lazy
-@> Ffms2.source( "test.mkv" ) |> pipey4m
+@> VapourSynth.Ffms2.source( "test.mkv" ) pipey4m
 ```
 
-Then we can do:
+Then it can done:
 ```
 $ julia file.jl | mplayer -
 ```
 
 We can pass parameters also:
 ```julia
+using VapourSynth
 using Lazy
-@> Ffms2.source( "test.mkv" ) |> savey4m("deleteme.y4m")
+@> VapourSynth.Ffms2.source( "test.mkv" ) savey4m("newfile.y4m")
 ```
-
-## Tasks
-Some tasks to do:
-
-- TODO: to enable Julia idiomatic by means of `|>`. Function chaining. [see this](https://discourse.julialang.org/t/piping-in-julia/14735) and [this](https://github.com/JuliaLang/julia/issues/5571).
-- TODO: to document exported functions by means of `@doc """Help""" Ffms2.source`
-- TODO: to enable array idiomatic. Something like: `clip[1,50]`.
 
 ## REPL
 In order to test in the REPL:
@@ -46,17 +64,23 @@ In order of reading and exporting the file as an *.y4m file*:
 ```julia
 julia> using VapourSynth
 julia> using Lazy
-julia> @> VapourSynth.Ffms2.source( "/home/jose/src/julia/vapoursynth/videos/test.mkv" ) savey4m("/tmp/delete.y4m")
+julia> @> VapourSynth.Ffms2.source( "test.mkv" ) savey4m("/tmp/newvideo.y4m")
 ```
 
-Another example:
+To avoid using long namespaces, we can bring functions into scope as in the following example:
 ```julia
 julia> using VapourSynth
 julia> using VapourSynth.Ffms2
-julia> using VapourSynth.Std
+julia> using VapourSynth.Std: turn180, flipHorizontal
 julia> using Lazy
-julia> @> source( "test.mkv" ) turn180 savey4m("/tmp/newvideo.y4m")
+julia> @> source( "test.mkv" ) turn180 flipHorizontal savey4m("/tmp/newvideo.y4m")
 ```
+
+## Tasks
+Some tasks to do:
+
+- TODO: to document exported functions by means of `@doc """Help""" Ffms2.source`
+- TODO: to enable array idiomatic. Something like: `clip[1,50]`.
 
 ## Links
 Python scripting:
