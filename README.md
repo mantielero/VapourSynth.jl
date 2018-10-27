@@ -81,15 +81,54 @@ julia> using Lazy
 julia> @> source( "test.mkv" ) turn180 flipHorizontal savey4m("/tmp/newvideo.y4m")
 ```
 
+## Clip slicing
+It can be done:
+```julia
+julia> using VapourSynth
+julia> using VapourSynth.Ffms2
+julia> clip = source( "test.mkv" )
+Clip:
+Video Info:
+   Frame Format:
+   name              : YUV420P8
+   id                : 3000010
+   colorFamily       : cmYUV
+   sampleType        : stInteger
+   bits per sample   : 8
+   bytes per sample  : 1
+   subSampling (W,H) : (1,1)
+   num. planes       : 3
+   fpsNum/fpsDen  : 30/1
+   width x height : 1280 x 768
+   numFrames      : 976
+   flags          : nfMakeLinear
+
+julia> newclip = clip[101:150]
+Clip:
+Video Info:
+   Frame Format:
+   name              : YUV420P8
+   id                : 3000010
+   colorFamily       : cmYUV
+   sampleType        : stInteger
+   bits per sample   : 8
+   bytes per sample  : 1
+   subSampling (W,H) : (1,1)
+   num. planes       : 3
+   fpsNum/fpsDen  : 30/1
+   width x height : 1280 x 768
+   numFrames      : 50
+   flags          : nfNoCache
+
+```
+The first and last frame are inclusive.
+
+- TODO: to implement safe limits.
+
 ## Tasks
 Some tasks to do:
 
 - TODO: to document exported functions by means of `@doc """Help""" Ffms2.source`
-- TODO: to enable array idiomatic. Something like: `clip[1:50]`:
-```julia
-julia> clip2=clip[2:10]
-ERROR: MethodError: no method matching getindex(::VapourSynth.Clip, ::UnitRange{Int64})
-```
 
 ## Links
 Python scripting:
