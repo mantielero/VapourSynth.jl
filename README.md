@@ -85,7 +85,11 @@ julia> @> source( "test.mkv" ) turn180 flipHorizontal savey4m("/tmp/newvideo.y4m
 Some tasks to do:
 
 - TODO: to document exported functions by means of `@doc """Help""" Ffms2.source`
-- TODO: to enable array idiomatic. Something like: `clip[1,50]`.
+- TODO: to enable array idiomatic. Something like: `clip[1:50]`:
+```julia
+julia> clip2=clip[2:10]
+ERROR: MethodError: no method matching getindex(::VapourSynth.Clip, ::UnitRange{Int64})
+```
 
 ## Links
 Python scripting:

@@ -26,6 +26,9 @@ function gen_module( core::Ptr{VSCore}, cadena::String)
 
         func = create_function( plugin_ptr, String( arguments[1] ), params)
         funcname = String( lowercasefirst(arguments[1]) )
+        #if funcname == "trim"
+        #    println(params)
+        #end
         #funcname = String( arguments[1] )
         funcnames = [funcnames; Symbol(funcname)]
         commands = [commands; func]#Expr(:(=), Symbol(funcname), func )]

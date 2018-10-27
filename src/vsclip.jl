@@ -120,8 +120,16 @@ struct Clip
    end
 end
 
+
 function Base.getindex( clip::Clip, n::Int64 )
    Frame( clip.ptr, n, "Mi primer error" )
+end
+
+"""
+https://github.com/vapoursynth/vapoursynth/blob/master/src/cython/vapoursynth.pyx#L1359
+"""
+function Base.getindex( clip::Clip, range::UnitRange{Int64} )
+   Main.VapourSynth.Std.trim(clip; first=range[1], last=range[end])
 end
 
 Base.lastindex(c::Clip) = c.info.numFrames

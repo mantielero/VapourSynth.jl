@@ -190,7 +190,6 @@ Creates modules based on loaded plugins
 function genmodules(  core::Ptr{VSCore} )
     vsmap = getPlugins( core )
     for item in vsmap2list( vsmap )
-        #println(item[2])
         gen_module( core, item[2])
     end
 end
@@ -295,11 +294,8 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
     # Creamos la llamada a la función
     # Incluye: parámetros obligatorios + opcionales (les asigna nothing)
     f_arguments = []
-    f_argumentsopt = Expr(:parameters)
-    #if funcname == "turn180"
-    #    println(params)
-    #end
-    #args_mandatory = []
+
+
     args = []
 
     for i in 1:length(params)
@@ -316,13 +312,15 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
         end
     end
 
+    optional = [arg[3] for arg in args if !arg[5]]
+    f_argumentsopt = Expr(:parameters,optional...)
+
     f_call = Expr( :call,
                    funcnamesbl,
-                   [ex for (t, s, ex, tipo, mandatory) in args]...)
-
+                   f_argumentsopt,
+                   [ex for (t, s, ex, tipo, mandatory) in args if mandatory]...)
 
     lista = []
-
     lista = vcat(lista, :(vsmap = Main.VapourSynth.createMap()))
     #println(f_call)
     for (t,s,ex,tipo,mandatory) in args
@@ -424,11 +422,11 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
     #    end
     #end
     #lista = vcat(lista, error_mng) #:(println("|ERROR|", error)) )
-    #lista = vcat(lista, :(tmp = Main.VapourSynth.vsmap2list( tmp )) )
 
+    #lista = vcat(lista, :(println(Main.VapourSynth.vsmap2list( tmp )) ))
     lista = vcat(lista, :(tmp = Main.VapourSynth.vsmap2list( tmp )) )
     tmp1 = quote
-        if length( tmp ) == 1
+        if Main.length( tmp ) == 1
             tmp = tmp[1][2]
             #println(typeof(tmp))
             #if tmp <: Ptr{Main.VapourSynth.VSNodeRef}
@@ -443,9 +441,12 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
     end
     lista = vcat(lista, tmp1)
 
-    #end
+
     f_body = Expr(:block,lista...)
     f_declare = Expr( :function, f_call, f_body )
+    #if funcname == "trim"
+    #    print(f_declare)
+    #end
     f_declare
 end
 
