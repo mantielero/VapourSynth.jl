@@ -123,7 +123,11 @@ Video Info:
 ```
 The first and last frame are inclusive.
 
-- TODO: to implement safe limits.
+So the following is possible:
+- The whole clip: `clip[1:end]`
+- Reversed: `clip[end:-1:1]`
+- Odd: `clip[1:2:end]`
+- Even: `clip[2:2:end]`
 
 ## Tasks
 Some tasks to do:
