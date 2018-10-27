@@ -1,4 +1,6 @@
 # ======================= NODES ========================
+import Base: +
+
 """
 Son nodos del grafo de filtros.
 
@@ -182,6 +184,12 @@ function Base.show(io::IO, c::Clip)
    println("   $(c.info)")
 end
 
+"""
+http://www.vapoursynth.com/doc/functions/splice.html
+"""
+function +(x::Clip, y::Clip)
+   VapourSynth.Std.splice([x, y])
+end
 
 
 """

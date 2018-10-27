@@ -250,7 +250,7 @@ function get_new_type( t::String)
     elseif t == "clip"
         return Clip
     elseif t == "clip[]"
-        return Array{Clip}
+        return Array{Clip,1}
     elseif t == "int[]"
         return Array{Int,1}
     elseif t == "float[]"
@@ -265,24 +265,6 @@ function get_new_type( t::String)
         println("[ERROR] vsplugins - get_new_type: No se conoce el tipo: $(t)")
     end
 end
-
-#=
-macro isdefined(var)
-   quote
-       try
-           local _ = $(esc(var))
-           true
-       catch err
-           isa(err, UndefVarError) ? false : rethrow(err)
-       end
-   end
-end
-
-function isdefined(x)
-    @isdefined x
-end
-=#
-
 
 # DADO QUE ESTO NO ES POSIBLE, USAR LA APROXIMACIÓN DE CREAR FICHEROS DE TEXTO CON LOS MÓDULOS
 # es decir: un módulo "ffms2" que contiene las funciones. Además es más legible.
@@ -346,6 +328,14 @@ function create_function( ptr::Ptr{VSPlugin}, funcname::String, params)
                 lista = vcat(lista, :(Main.VapourSynth.propSetFunc( vsmap, $t, $s, Main.VapourSynth.paAppend ) ))
             elseif tipo <: Clip
                 lista = vcat(lista, :(tmp = Main.VapourSynth.propSetNode( vsmap, $t, $s.ptr, Main.VapourSynth.paAppend ) ))
+
+            elseif tipo <: Array{Clip, 1}
+                tmp = quote
+                    for clip in $s
+                        Main.VapourSynth.propSetNode( vsmap, $t, clip.ptr, Main.VapourSynth.paAppend )
+                    end
+                end
+                lista = vcat(lista, tmp )
             end
         else
             if tipo <: Int

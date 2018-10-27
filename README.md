@@ -129,6 +129,11 @@ So the following is possible:
 - Odd: `clip[1:2:end]`
 - Even: `clip[2:2:end]`
 
+Is it possible to add clips also just by doing:
+```julia
+clip1+clip2
+```
+
 ## Tasks
 Some tasks to do:
 
