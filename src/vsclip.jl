@@ -125,11 +125,54 @@ function Base.getindex( clip::Clip, n::Int64 )
    Frame( clip.ptr, n, "Mi primer error" )
 end
 
+Base.firstindex(clip::Clip) = 1
+
+Base.lastindex(clip::Clip) = clip.info.numFrames
+
 """
 https://github.com/vapoursynth/vapoursynth/blob/master/src/cython/vapoursynth.pyx#L1359
 """
 function Base.getindex( clip::Clip, range::UnitRange{Int64} )
-   Main.VapourSynth.Std.trim(clip; first=range[1], last=range[end])
+   start = range.start-1
+   stop = range.stop-1
+   if start < 0
+      throw("It is not allowed to start before the first the frame")
+   end
+   if stop > clip.info.numFrames -1
+      throw("It is not allowed to stop after the last frame")
+   end
+   if start > stop
+      throw("To reverse the clip use: clip[start:step:stop]")
+   end
+
+   Main.VapourSynth.Std.trim(clip; first=start, last=stop )
+end
+
+function Base.getindex( clip::Clip, range::StepRange{Int64} )
+   start = range.start-1
+   stop = range.stop-1
+   step = range.step
+   if range.step < 0
+      if start > clip.info.numFrames-1
+         throw("When reversing, the start frame cannot be higher than the max number of frames")
+      end
+      if stop < 0
+         throw("When reversing, the stop frame cannot be smaller than the first frame")
+      end
+      if start < stop
+         throw("When reversing, the start frame shall be bigger than the stop frame")
+      end
+      clip = Main.VapourSynth.Std.reverse(clip)
+      step = -range.step
+      start = range.stop-1
+      stop = range.start-1
+   end
+   clip = Main.VapourSynth.Std.trim(clip; first=start, last=stop )
+   if step > 1
+      clip = Main.VapourSynth.Std.selectEvery(clip, abs(step), [0])
+   end
+
+   clip
 end
 
 Base.lastindex(c::Clip) = c.info.numFrames
