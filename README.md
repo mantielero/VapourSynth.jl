@@ -44,7 +44,7 @@ using Lazy
 @> VapourSynth.Ffms2.source( "test.mkv" ) pipey4m
 ```
 
-Then it can done:
+This way, the following works:
 ```
 $ julia file.jl | mplayer -
 ```
